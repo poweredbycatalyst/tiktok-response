@@ -45,7 +45,7 @@
 
     function loginWithYouTube() {
       const clientId = "750933109518-q1r2dn61p6eb30d7h45f727h51b0uo9c.apps.googleusercontent.com";
-      const redirectUri = encodeURIComponent("https://poweredbycatalyst.github.io/tiktok-response/youtube.html");
+      const redirectUri = encodeURIComponent("https://poweredbycatalyst.github.io/tiktok-response/response.html");
       const scope = encodeURIComponent("https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube");
       const state = "secureRandomState123";
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&access_type=offline&state=${state}&prompt=consent`;
