@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
-<head><title>YouTube Auth Response</title></head>
+<head>
+  <title>TikTok Auth Response</title>
+</head>
 <body>
   <p>Logging you in...</p>
   <script>
@@ -12,7 +14,7 @@
       window.opener.postMessage({ code, state }, "*");
       setTimeout(() => window.close(), 1000);
     } else {
-      document.body.innerHTML = "<p>Failed to receive code.</p>";
+      document.body.innerHTML = "<p>❌ Failed to receive code.</p>";
     }
   </script>
 </body>
