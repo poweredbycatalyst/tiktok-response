@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login with TikTok</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      color: #010101;
+    }
+    button {
+      background-color: #010101;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #333;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Login with TikTok</h2>
+  <button onclick="loginWithTikTok()">Login</button>
+  <p id="status"></p>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function loginWithTikTok() {
+      const clientId = "sbaw1lh712k6id43br";
+      const redirectUri = encodeURIComponent("https://poweredbycatalyst.github.io/tiktok-response/response.html");
+      const scope = encodeURIComponent("user.info.basic");
+      const userGuid = getQueryParam("user_guid");
+      const state = encodeURIComponent(userGuid);
+
+      console.log("User GUID:", userGuid); // Debugging
+
+      const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientId}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
+      window.open(authUrl, "TikTokLogin", "width=500,height=600");
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.data.code && event.data.state) {
+        const statusEl = document.getElementById("status");
+        statusEl.textContent = "✅ TikTok login successful! Sending code...";
+
+        fetch("https://prod-138.westus.logic.azure.com:443/workflows/aa2bc40574f341a8bc22c544ef08220c/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=PXeBlIfgz6YTfaGm6-TfeFmourm-WJSm_z00-UJ97_c", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code: event.data.code,
+            state: event.data.state,
+            type: "tiktok",
+            user_guid: event.data.state
+          })
+        })
+        .then(() => {
+          statusEl.textContent = "✅ Code sent to Power Automate!";
+        })
+        .catch(err => {
+          statusEl.textContent = "❌ Error sending to Power Automate.";
+          console.error("Error:", err);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
