@@ -1,1 +1,19 @@
-#youtuberesponse
+<!DOCTYPE html>
+<html>
+<head><title>YouTube Auth Response</title></head>
+<body>
+  <p>Logging you in...</p>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const state = params.get("state");
+
+    if (code && window.opener) {
+      window.opener.postMessage({ code, state }, "*");
+      setTimeout(() => window.close(), 1000);
+    } else {
+      document.body.innerHTML = "<p>Failed to receive code.</p>";
+    }
+  </script>
+</body>
+</html>
