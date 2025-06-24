@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>TikTok Callback</title>
+  <title>TikTok Auth Response</title>
 </head>
 <body>
-  <h2>Logging you in...</h2>
+  <p>Logging you in...</p>
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
-    const state = urlParams.get("state");
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const state = params.get("state");
 
-    if (code) {
-      // Send code back to the opener (iframe parent)
+    if (code && window.opener) {
       window.opener.postMessage({ code, state }, "*");
-      window.close();
+      setTimeout(() => window.close(), 1000);
     } else {
-      document.body.innerHTML = "<h2>No code received.</h2><p>Something went wrong.</p>";
+      document.body.innerHTML = "<p>❌ Failed to receive code.</p>";
     }
   </script>
 </body>
