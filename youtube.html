@@ -1,21 +1,84 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>TikTok Auth Response</title>
+  <meta charset="UTF-8" />
+  <title>Login with YouTube</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      color: #cc181e;
+    }
+    button {
+      background-color: #cc181e;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a81416;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <p>Logging you in...</p>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    const state = params.get("state");
+  <h2>Login with YouTube</h2>
+  <button onclick="loginWithYouTube()">Login</button>
+  <p id="status"></p>
 
-    if (code && window.opener) {
-      window.opener.postMessage({ code, state }, "*");
-      setTimeout(() => window.close(), 1000);
-    } else {
-      document.body.innerHTML = "<p>❌ Failed to receive code.</p>";
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
     }
+
+    function loginWithYouTube() {
+      const clientId = "750933109518-q1r2dn61p6eb30d7h45f727h51b0uo9c.apps.googleusercontent.com";
+      const redirectUri = encodeURIComponent("https://poweredbycatalyst.github.io/tiktok-response/youtube.html");
+      const scope = encodeURIComponent("https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube");
+      const state = "secureRandomState123";
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&access_type=offline&state=${state}&prompt=consent`;
+
+      window.open(authUrl, "YouTubeLogin", "width=500,height=600");
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.data.code) {
+        const statusEl = document.getElementById("status");
+        const userGuid = getQueryParam("user_guid");
+
+        statusEl.textContent = "✅ YouTube login successful! Sending code...";
+
+        fetch("https://prod-138.westus.logic.azure.com:443/workflows/aa2bc40574f341a8bc22c544ef08220c/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=PXeBlIfgz6YTfaGm6-TfeFmourm-WJSm_z00-UJ97_c", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code: event.data.code,
+            state: event.data.state,
+            type: "youtube",
+            user_guid: userGuid
+          })
+        })
+        .then(() => {
+          statusEl.textContent = "✅ Code sent to Power Automate!";
+        })
+        .catch(err => {
+          statusEl.textContent = "❌ Error sending to Power Automate.";
+          console.error("Error:", err);
+        });
+      }
+    });
   </script>
 </body>
 </html>
