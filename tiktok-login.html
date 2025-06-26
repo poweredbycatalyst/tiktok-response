@@ -45,7 +45,7 @@
     function loginWithTikTok() {
       const clientId = "sbaw1lh712k6id43br";
       const redirectUri = encodeURIComponent("https://poweredbycatalyst.github.io/tiktok-response/response.html");
-      const scope = encodeURIComponent("user.info.basic");
+      const scope = encodeURIComponent("user.info.basic,user.info.profile,user.info.stats");
       const userGuid = getQueryParam("user_guid");
       const state = encodeURIComponent(userGuid);
 
