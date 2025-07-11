@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login with Facebook</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      color: #010101;
+    }
+    button {
+      background-color: #1877f2;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #145dbf;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Login with Facebook</h2>
+  <button onclick="loginWithFacebook()">Login</button>
+  <p id="status"></p>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function loginWithFacebook() {
+      const clientId = "10083046141742442";
+      const redirectUri = encodeURIComponent("https://yourdomain.com/facebook-callback.html");
+      const scope = encodeURIComponent("ads_management,business_management");
+      const userGuid = getQueryParam("user_guid");
+      const state = encodeURIComponent(userGuid || "default_state");
+
+      const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code`;
+      window.location.href = authUrl;
+    }
+  </script>
+</body>
+</html>
