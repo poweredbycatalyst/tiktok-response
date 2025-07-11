@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Facebook Deauthorization Handler</title>
+</head>
+<body>
+  <p>Processing deauthorization...</p>
+  <script>
+    async function sendToPowerAutomate(data) {
+      try {
+        await fetch("https://your-powerautomate-url.com", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        document.body.innerHTML = "<p>✅ Deauthorization processed.</p>";
+      } catch (error) {
+        console.error("Error sending to Power Automate:", error);
+        document.body.innerHTML = "<p>❌ Failed to notify Power Automate.</p>";
+      }
+    }
+
+    // GitHub Pages can't receive POST data directly, so simulate with query string
+    const params = new URLSearchParams(window.location.search);
+    const signedRequest = params.get("signed_request");
+
+    if (signedRequest) {
+      sendToPowerAutomate({ signed_request: signedRequest });
+    } else {
+      document.body.innerHTML = "<p>❌ No signed_request found.</p>";
+    }
+  </script>
+</body>
+</html>
